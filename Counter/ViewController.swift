@@ -8,8 +8,6 @@
 import UIKit
 
 class ViewController: UIViewController {
-    
-    private var currentDate = Date()
     let dateFormatter = DateFormatter()
     private var counter = 0
     @IBOutlet weak var historyText: UITextView!
