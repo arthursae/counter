@@ -2,53 +2,64 @@
 //  ViewController.swift
 //  Counter
 //
-//  Created by Artur Abdurakhmanov on 17/09/2025.
-//
 
 import UIKit
 
-class ViewController: UIViewController {
-    let dateFormatter = DateFormatter()
+final class ViewController: UIViewController {
+
+    // MARK: - Outlets
+
+    @IBOutlet private weak var historyText: UITextView!
+    @IBOutlet private weak var counterLabel: UILabel!
+
+    // MARK: - Properties
+
     private var counter = 0
-    @IBOutlet weak var historyText: UITextView!
-    @IBOutlet weak var counterLabel: UILabel!
-    
-    @IBAction func plusButton(_ sender: Any) {
-        counter += 1
-        counterLabel.text = "\(counter)"
-        let dateTimeMessage = "[\(dateFormatter.string(from: Date()))]"
-        let userMessage = " значение изменено на +1"
-        historyText.text += "\r\n" + dateTimeMessage + userMessage
-    }
-    
-    @IBAction func minusButton(_ sender: Any) {
-        counter -= 1
-        let dateTimeMessage = "[\(dateFormatter.string(from: Date()))]"
-        if counter >= 0 {
-            counterLabel.text = "\(counter)"
-            let userMessage = " значение изменено на -1"
-            historyText.text += "\r\n" + dateTimeMessage + userMessage
-        } else if counter < 0 {
-            counter = 0
-            let userMessage = " попытка уменьшить значение счётчика ниже 0"
-            historyText.text += "\r\n" + dateTimeMessage + userMessage
-            counterLabel.text = "0"
-        }
-    }
-    
-    @IBAction func resetButton(_ sender: Any) {
-        counter = 0
-        counterLabel.text = "0"
-        let dateTimeMessage = "[\(dateFormatter.string(from: Date()))]"
-        let userMessage = " значение сброшено"
-        historyText.text += "\r\n" + dateTimeMessage + userMessage
-    }
-    
+
+    private lazy var dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ru_RU")
+        formatter.dateStyle = .short
+        formatter.timeStyle = .medium
+        return formatter
+    }()
+
+    // MARK: - Lifecycle
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
-        dateFormatter.locale = Locale(identifier: "ru_RU")
-        dateFormatter.dateStyle = .short
-        dateFormatter.timeStyle = .medium
+    }
+
+    // MARK: - Actions
+
+    @IBAction private func plusButton(_ sender: Any) {
+        counter += 1
+        counterLabel.text = "\(counter)"
+        appendToHistory("значение изменено на +1")
+    }
+
+    @IBAction private func minusButton(_ sender: Any) {
+        counter -= 1
+        if counter >= 0 {
+            counterLabel.text = "\(counter)"
+            appendToHistory("значение изменено на -1")
+        } else {
+            counter = 0
+            counterLabel.text = "0"
+            appendToHistory("попытка уменьшить значение счётчика ниже 0")
+        }
+    }
+
+    @IBAction private func resetButton(_ sender: Any) {
+        counter = 0
+        counterLabel.text = "0"
+        appendToHistory("значение сброшено")
+    }
+
+    // MARK: - Private Methods
+
+    private func appendToHistory(_ message: String) {
+        let timestamp = "[\(dateFormatter.string(from: Date()))]"
+        historyText.text += "\n\(timestamp) \(message)"
     }
 }
